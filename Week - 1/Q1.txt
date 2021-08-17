@@ -1,0 +1,6 @@
+The number of keywords in the language is 9.
+They are as follows:- int, if, then, else, endif,while, do, enddo, print.
+
+The number of operators in the language is 12.
+They are as follows:- <, <=, >, >=, ==, =, !=,  +, *, /, -, |.
+
