@@ -1,6 +1,6 @@
 /*
-    * Implement the lexical analyzer using JLex, flex, flex 
-    * or lex or other lexical analyzer generating tools.
+ * Implement the lexical analyzer using JLex, flex, flex 
+ * or lex or other lexical analyzer generating tools.
  /*
 
 
