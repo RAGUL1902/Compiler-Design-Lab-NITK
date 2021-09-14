@@ -1,3 +1,6 @@
+// Extend the above program to print the Productions used while checking the acceptance of string.
+
+
 #include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
@@ -36,7 +39,7 @@ int main(){
     }
 
     int ans;
-    cout << "Do you want to continue giving strings? Press 1 if yes and 0 if no." << endl;
+    cout << "Press 1 to continue the string or 0 to stop" << endl;
     cin >> ans;
     vector<pair<char,string>> parses;
 
@@ -101,7 +104,7 @@ int main(){
     }
 
     parses.clear();
-    cout << "Do you want to continue giving strings? Press 1 if yes and 0 if no." << endl;
+    cout << "Press 1 to continue the string or 0 to stop" << endl;
     cin >> ans;
     }
 

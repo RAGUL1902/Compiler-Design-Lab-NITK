@@ -1,16 +1,14 @@
 /*
- * C program to calculate the First and Follow sets of a given grammar
+ *  Implement a program to identify FIRST and FOLLOW sets for a given Grammar.
  */
 
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
-// Functions to calculate Follow
 void followfirst(char, int, int);
 void follow(char c);
 
-// Function to calculate First
 void findfirst(char, int, int);
 
 int count, n = 0;
@@ -53,7 +51,7 @@ int main(int argc, char **argv)
     char done[count];
     int ptr = -1;
 
-    // Initializing the calc_first array
+   
     for (k = 0; k < count; k++)
     {
         for (kay = 0; kay < 100; kay++)
@@ -78,16 +76,16 @@ int main(int argc, char **argv)
         if (xxx == 1)
             continue;
 
-        // Function call
+        
         findfirst(c, 0, 0);
         ptr += 1;
 
-        // Adding c to the calculated list
+       
         done[ptr] = c;
         printf("\n First(%c) = { ", c);
         calc_first[point1][point2++] = c;
 
-        // Printing the First Sets of the grammar
+      
         for (i = 0 + jm; i < n; i++)
         {
             int lark = 0, chk = 0;
@@ -116,7 +114,6 @@ int main(int argc, char **argv)
     char donee[count];
     ptr = -1;
 
-    // Initializing the calc_follow array
     for (k = 0; k < count; k++)
     {
         for (kay = 0; kay < 100; kay++)
@@ -142,16 +139,16 @@ int main(int argc, char **argv)
             continue;
         land += 1;
 
-        // Function call
+      
         follow(ck);
         ptr += 1;
 
-        // Adding ck to the calculated list
+       
         donee[ptr] = ck;
         printf(" Follow(%c) = { ", ck);
         calc_follow[point1][point2++] = ck;
 
-        // Printing the Follow Sets of the grammar
+       
         for (i = 0 + km; i < m; i++)
         {
             int lark = 0, chk = 0;
@@ -213,8 +210,6 @@ void findfirst(char c, int q1, int q2)
 {
     int j;
 
-    // The case where we
-    // encounter a Terminal
     if (!(isupper(c)))
     {
         first[n++] = c;
@@ -255,8 +250,6 @@ void followfirst(char c, int c1, int c2)
 {
     int k;
 
-    // The case where we encounter
-    // a Terminal
     if (!(isupper(c)))
         f[m++] = c;
     else

@@ -1,13 +1,15 @@
+/* 
+* Write a program to construct a Parsing table for a grammar.
+*/
+
 #include <stdio.h>
 #include <string.h>
 #define TSIZE 128
 // table[i][j] stores
-// the index of production that must be applied on
-// ith varible if the input is
+// the index of production that must be applied on ith varible if the input is
 // jth nonterminal
 int table[100][TSIZE];
-// stores all list of terminals
-// the ASCII value if use to index terminals
+// stores all list of terminals the ASCII value if use to index terminals 
 // terminal[i] = 1 means the character with
 // ASCII value is a terminal
 char terminal[TSIZE];
@@ -36,7 +38,6 @@ int isNT(char c)
 {
     return c >= 'A' && c <= 'Z';
 }
-// reading data from the file
 void readFromFile()
 {
     FILE *fptr;
@@ -221,7 +222,6 @@ int main()
     FIRST_RHS();
     int i, j, k;
 
-    // display first of each variable
     printf("\n");
     for (i = 0; i < no_pro; ++i)
     {
@@ -240,7 +240,6 @@ int main()
         }
     }
 
-    // display follow of each variable
     printf("\n");
     for (i = 0; i < no_pro; ++i)
     {
@@ -274,18 +273,15 @@ int main()
         printf("\n");
     }
 
-    // the parse table contains '$'
-    // set terminal['$'] = 1
+    // the parse table contains '$' set terminal['$'] = 1
     // to include '$' in the parse table
     terminal['$'] = 1;
 
-    // the parse table do not read '^'
-    // as input
-    // so we set terminal['^'] = 0
+    // the parse table do not read '^' as input so we set terminal['^'] = 0
     // to remove '^' from terminals
     terminal['^'] = 0;
 
-    // printing parse table
+    
     printf("\n");
     printf("\n\t**************** LL(1) PARSING TABLE *******************\n");
     printf("\t--------------------------------------------------------\n");

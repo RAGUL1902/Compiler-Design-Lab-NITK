@@ -1,3 +1,8 @@
+
+//Write a program to implement LL1 Parser which takes string and Parsing table as input 
+ //and determines whether the string is accepted by the grammar.
+
+
 #include <iostream>
 #include <bits/stdc++.h>
 using namespace std;
@@ -36,13 +41,13 @@ int main(){
     }
 
     int ans;
-    cout << "Do you want to continue giving strings? Press 1 if yes and 0 if no." << endl;
+    cout << "Press 1 to continue the string or 0 to stop" << endl;
     cin >> ans;
 
     while(ans){
     string input;
     string buffer;
-    cout << "Enter the input-string: ";
+    cout << "Enter the string ";
     cin >> input;
 
     stack<char> st;
@@ -94,7 +99,7 @@ int main(){
         else cout << "Accepted" << endl;
     }
 
-    cout << "Do you want to continue giving strings? Press 1 if yes and 0 if no." << endl;
+    cout << "Press 1 to continue the string or 0 to stop" << endl;
     cin >> ans;
     }
 
