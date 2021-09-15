@@ -1,38 +1,52 @@
 /* 
-* Write a program to construct a Parsing table for a grammar.
-*/
-
+ * Write a program to construct a Parsing table for a grammar.
+ */
 #include <stdio.h>
 #include <string.h>
 #define TSIZE 128
-// table[i][j] stores
-// the index of production that must be applied on ith varible if the input is
-// jth nonterminal
+
+/* 
+ * table[i][j] stores
+ * the index of production that must be applied on ith varible if the input is
+ * jth nonterminal
+ */
 int table[100][TSIZE];
-// stores all list of terminals the ASCII value if use to index terminals 
-// terminal[i] = 1 means the character with
-// ASCII value is a terminal
+
+/*
+ * stores all list of terminals the ASCII value if use to index terminals
+ * terminal[i] = 1 means the character with
+ * ASCII value is a terminal
+ */
 char terminal[TSIZE];
-// stores all list of terminals
-// only Upper case letters from 'A' to 'Z'
-// can be nonterminals
-// nonterminal[i] means ith alphabet is present as
-// nonterminal is the grammar
+
+/*
+ * stores all list of terminals
+ * only Upper case letters from 'A' to 'Z'
+ * can be nonterminals
+ * nonterminal[i] means ith alphabet is present as
+ * nonterminal is the grammar
+ */
 char nonterminal[26];
-// structure to hold each production
-// str[] stores the production
-// len is the length of production
+
+/*
+ * structure to hold each production
+ * str[] stores the production
+ * len is the length of production
+ */
 struct product
 {
     char str[100];
     int len;
 } pro[20];
+
 // no of productions in form A->ß
 int no_pro;
+
 char first[26][TSIZE];
 char follow[26][TSIZE];
-// stores first of each production in form A->ß
+
 char first_rhs[100][TSIZE];
+
 // check if the symbol is nonterminal
 int isNT(char c)
 {
@@ -281,7 +295,6 @@ int main()
     // to remove '^' from terminals
     terminal['^'] = 0;
 
-    
     printf("\n");
     printf("\n\t**************** LL(1) PARSING TABLE *******************\n");
     printf("\t--------------------------------------------------------\n");

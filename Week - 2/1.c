@@ -51,7 +51,6 @@ int main(int argc, char **argv)
     char done[count];
     int ptr = -1;
 
-   
     for (k = 0; k < count; k++)
     {
         for (kay = 0; kay < 100; kay++)
@@ -76,16 +75,13 @@ int main(int argc, char **argv)
         if (xxx == 1)
             continue;
 
-        
         findfirst(c, 0, 0);
         ptr += 1;
 
-       
         done[ptr] = c;
         printf("\n First(%c) = { ", c);
         calc_first[point1][point2++] = c;
 
-      
         for (i = 0 + jm; i < n; i++)
         {
             int lark = 0, chk = 0;
@@ -139,16 +135,13 @@ int main(int argc, char **argv)
             continue;
         land += 1;
 
-      
         follow(ck);
         ptr += 1;
 
-       
         donee[ptr] = ck;
         printf(" Follow(%c) = { ", ck);
         calc_follow[point1][point2++] = ck;
 
-       
         for (i = 0 + km; i < m; i++)
         {
             int lark = 0, chk = 0;
