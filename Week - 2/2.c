@@ -1,352 +1,332 @@
-/* 
- * Write a program to construct a Parsing table for a grammar.
- */
 #include <stdio.h>
+#include <ctype.h>
 #include <string.h>
-#define TSIZE 128
 
-/* 
- * table[i][j] stores
- * the index of production that must be applied on ith varible if the input is
- * jth nonterminal
- */
-int table[100][TSIZE];
+int pno;
+char production[25][25];
 
-/*
- * stores all list of terminals the ASCII value if use to index terminals
- * terminal[i] = 1 means the character with
- * ASCII value is a terminal
- */
-char terminal[TSIZE];
-
-/*
- * stores all list of terminals
- * only Upper case letters from 'A' to 'Z'
- * can be nonterminals
- * nonterminal[i] means ith alphabet is present as
- * nonterminal is the grammar
- */
-char nonterminal[26];
-
-/*
- * structure to hold each production
- * str[] stores the production
- * len is the length of production
- */
-struct product
+void add_res(char array[], char val)
 {
-    char str[100];
-    int len;
-} pro[20];
-
-// no of productions in form A->ß
-int no_pro;
-
-char first[26][TSIZE];
-char follow[26][TSIZE];
-
-char first_rhs[100][TSIZE];
-
-// check if the symbol is nonterminal
-int isNT(char c)
-{
-    return c >= 'A' && c <= 'Z';
-}
-void readFromFile()
-{
-    FILE *fptr;
-    fptr = fopen("input.txt", "r");
-    char buffer[255];
-    int i;
-    int j;
-    while (fgets(buffer, sizeof(buffer), fptr))
+    int temp;
+    for (temp = 0; array[temp] != '\0'; temp++)
     {
-        printf("%s", buffer);
-        j = 0;
-        nonterminal[buffer[0] - 'A'] = 1;
-        for (i = 0; i < strlen(buffer) - 1; ++i)
+        if (array[temp] == val)
         {
-            if (buffer[i] == '|')
+            return;
+        }
+    }
+    array[temp] = val;
+    array[temp + 1] = '\0';
+}
+
+void first(char *array, char ch)
+{
+    int count, j, k;
+    char temporary_result[20];
+    int x;
+    temporary_result[0] = '\0';
+    array[0] = '\0';
+    if (!(isupper(ch)))
+    {
+        add_res(array, ch);
+        return;
+    }
+    for (count = 0; count < pno; count++)
+    {
+        if (production[count][0] == ch)
+        {
+            if (production[count][2] == '#')
             {
-                ++no_pro;
-                pro[no_pro - 1].str[j] = '\0';
-                pro[no_pro - 1].len = j;
-                pro[no_pro].str[0] = pro[no_pro - 1].str[0];
-                pro[no_pro].str[1] = pro[no_pro - 1].str[1];
-                pro[no_pro].str[2] = pro[no_pro - 1].str[2];
-                j = 3;
+                add_res(array, '#');
             }
             else
             {
-                pro[no_pro].str[j] = buffer[i];
-                ++j;
-                if (!isNT(buffer[i]) && buffer[i] != '-' && buffer[i] != '>')
+                j = 2;
+                while (production[count][j] != '\0')
                 {
-                    terminal[buffer[i]] = 1;
+                    x = 0;
+                    first(temporary_result, production[count][j]);
+                    for (k = 0; temporary_result[k] != '\0'; k++)
+                    {
+                        if (temporary_result[k] == '#')
+                        {
+                            continue;
+                        }
+                        add_res(array, temporary_result[k]);
+                    }
+                    for (k = 0; temporary_result[k] != '\0'; k++)
+                    {
+                        if (temporary_result[k] == '#')
+                        {
+                            x = 1;
+                            break;
+                        }
+                    }
+                    if (!x)
+                    {
+                        break;
+                    }
+                    j++;
+                }
+                if (production[count][j] == '\0')
+                {
+                    add_res(array, '#');
                 }
             }
         }
-        pro[no_pro].len = j;
-        ++no_pro;
     }
+    return;
 }
-void add_FIRST_A_to_FOLLOW_B(char A, char B)
+
+void follow(char *array, char ch)
 {
-    int i;
-    for (i = 0; i < TSIZE; ++i)
+    int i, j, k;
+    int length = strlen(production[i]);
+    array[0] = '\0';
+    char temporary_result[20];
+    char temp2[20];
+    char temp3[20];
+
+    for (i = 0; i < pno; i++)
     {
-        if (i != '^')
-            follow[B - 'A'][i] = follow[B - 'A'][i] || first[A - 'A'][i];
-    }
-}
-void add_FOLLOW_A_to_FOLLOW_B(char A, char B)
-{
-    int i;
-    for (i = 0; i < TSIZE; ++i)
-    {
-        if (i != '^')
-            follow[B - 'A'][i] = follow[B - 'A'][i] || follow[A - 'A'][i];
-    }
-}
-void FOLLOW()
-{
-    int t = 0;
-    int i, j, k, x;
-    while (t++ < no_pro)
-    {
-        for (k = 0; k < 26; ++k)
+        if (production[i][0] == ch)
         {
-            if (!nonterminal[k])
-                continue;
-            char nt = k + 'A';
-            for (i = 0; i < no_pro; ++i)
+            add_res(array, '$');
+        }
+        length = strlen(production[i]);
+        for (j = 2; j < length; j++)
+        {
+            if (production[i][j] == ch)
             {
-                for (j = 3; j < pro[i].len; ++j)
+                if (production[i][j + 1] != '\0')
                 {
-                    if (nt == pro[i].str[j])
+                    int t = 0, z;
+                    z = j;
+                    while (production[i][z + 1] != '\0')
                     {
-                        for (x = j + 1; x < pro[i].len; ++x)
+                        first(temporary_result, production[i][z + 1]);
+
+                        for (k = 0; temporary_result[k] != '\0'; k++)
                         {
-                            char sc = pro[i].str[x];
-                            if (isNT(sc))
+                            if (temporary_result[k] == '#')
                             {
-                                add_FIRST_A_to_FOLLOW_B(sc, nt);
-                                if (first[sc - 'A']['^'])
-                                    continue;
+                                t = 1;
+                                continue;
                             }
-                            else
-                            {
-                                follow[nt - 'A'][sc] = 1;
-                            }
+                            add_res(array, temporary_result[k]);
+                        }
+                        if (!t)
+                        {
                             break;
                         }
-                        if (x == pro[i].len)
-                            add_FOLLOW_A_to_FOLLOW_B(pro[i].str[0], nt);
+
+                        z++;
+                    }
+                    if (production[i][z + 1] == '\0' && production[i][z + 1] != production[i][0])
+                    {
+                        //printf("hey");
+                        follow(temp3, production[i][0]);
+
+                        for (k = 0; temp3[k] != '\0'; k++)
+                        {
+                            add_res(array, temp3[k]);
+                        }
+                    }
+                }
+                if (production[i][j + 1] == '\0' && ch != production[i][0])
+                {
+                    //printf("hey");
+                    follow(temp2, production[i][0]);
+
+                    for (k = 0; temp2[k] != '\0'; k++)
+                    {
+                        add_res(array, temp2[k]);
                     }
                 }
             }
         }
     }
 }
-void add_FIRST_A_to_FIRST_B(char A, char B)
+
+void pro_first(char *array, int s)
 {
-    int i;
-    for (i = 0; i < TSIZE; ++i)
+    array[0] = '\0';
+    char temp_res[20];
+    int j, k, x;
+    if (production[s][2] == '#')
     {
-        if (i != '^')
-        {
-            first[B - 'A'][i] = first[A - 'A'][i] || first[B - 'A'][i];
-        }
+        add_res(array, '#');
     }
-}
-void FIRST()
-{
-    int i, j;
-    int t = 0;
-    while (t < no_pro)
+    else
     {
-        for (i = 0; i < no_pro; ++i)
+        j = 2;
+        while (production[s][j] != '\0')
         {
-            for (j = 3; j < pro[i].len; ++j)
+            x = 0;
+            first(temp_res, production[s][j]);
+            for (k = 0; temp_res[k] != '\0'; k++)
             {
-                char sc = pro[i].str[j];
-                if (isNT(sc))
+                if (temp_res[k] == '#')
                 {
-                    add_FIRST_A_to_FIRST_B(sc, pro[i].str[0]);
-                    if (first[sc - 'A']['^'])
-                        continue;
+                    continue;
                 }
-                else
+                add_res(array, temp_res[k]);
+            }
+            for (k = 0; temp_res[k] != '\0'; k++)
+            {
+                if (temp_res[k] == '#')
                 {
-                    first[pro[i].str[0] - 'A'][sc] = 1;
+                    x = 1;
+                    break;
                 }
+            }
+            if (!x)
+            {
                 break;
             }
-            if (j == pro[i].len)
-                first[pro[i].str[0] - 'A']['^'] = 1;
+            j++;
         }
-        ++t;
-    }
-}
-void add_FIRST_A_to_FIRST_RHS__B(char A, int B)
-{
-    int i;
-    for (i = 0; i < TSIZE; ++i)
-    {
-        if (i != '^')
-            first_rhs[B][i] = first[A - 'A'][i] || first_rhs[B][i];
-    }
-}
-// Calculates FIRST(ß) for each A->ß
-void FIRST_RHS()
-{
-    int i, j;
-    int t = 0;
-    while (t < no_pro)
-    {
-        for (i = 0; i < no_pro; ++i)
+        if (production[s][j] == '\0')
         {
-            for (j = 3; j < pro[i].len; ++j)
-            {
-                char sc = pro[i].str[j];
-                if (isNT(sc))
-                {
-                    add_FIRST_A_to_FIRST_RHS__B(sc, i);
-                    if (first[sc - 'A']['^'])
-                        continue;
-                }
-                else
-                {
-                    first_rhs[i][sc] = 1;
-                }
-                break;
-            }
-            if (j == pro[i].len)
-                first_rhs[i]['^'] = 1;
+            add_res(array, '#');
         }
-        ++t;
     }
 }
+
 int main()
 {
-    readFromFile();
-    follow[pro[0].str[0] - 'A']['$'] = 1;
-    FIRST();
-    FOLLOW();
-    FIRST_RHS();
-    int i, j, k;
+    int count, i, j, len, k, l, ct1 = 0, ct2 = 0;
 
-    printf("\n");
-    for (i = 0; i < no_pro; ++i)
+    printf("\nEnter the Total Number of Productions:\t");
+    scanf("%d", &pno);
+    for (count = 0; count < pno; count++)
     {
-        if (i == 0 || (pro[i - 1].str[0] != pro[i].str[0]))
+        printf("\n Production  %d:\t", count + 1);
+        scanf("%s", production[count]);
+    }
+
+    char terminals[40], nonterminals[40], ch;
+    terminals[0] = '\0';
+    nonterminals[0] = '\0';
+    for (i = 0; i < count; i++)
+    {
+        len = strlen(production[i]);
+        for (j = 0; j < len; j++)
         {
-            char c = pro[i].str[0];
-            printf("FIRST OF %c: ", c);
-            for (j = 0; j < TSIZE; ++j)
+            if (j != 1)
             {
-                if (first[c - 'A'][j])
+                ch = production[i][j];
+                if (isupper(ch))
                 {
-                    printf("%c ", j);
+                    add_res(nonterminals, ch);
+                }
+                else
+                {
+                    if (ch == '#')
+                    {
+                        continue;
+                    }
+                    add_res(terminals, ch);
                 }
             }
-            printf("\n");
+        }
+    }
+    for (i = 0; i < nonterminals[i] != '\0'; i++)
+    {
+    }
+
+    ct2 = i;
+    // printf("%d ", ct2);
+    for (i = 0; i < terminals[i] != '\0'; i++)
+    {
+    }
+    terminals[i] = '$';
+    terminals[i + 1] = '\0';
+    ct1 = i + 1;
+    //printf("%d ",ct1);
+    // printf("hey1 ");
+    int parsetable[ct2][ct1];
+    for (i = 0; i < ct2; i++)
+    {
+        for (j = 0; j < ct1; j++)
+        {
+            parsetable[i][j] = 0;
+        }
+    }
+    for (i = 0; i < count; i++)
+    {
+        char tem1[20], tem2[20];
+        pro_first(tem1, i);
+        for (j = 0; j < ct2; j++)
+        {
+            if (nonterminals[j] == production[i][0])
+            {
+                l = j;
+                break;
+            }
+        }
+        //printf("hey2")
+        int x = 0;
+        for (k = 0; tem1[k] != '\0'; k++)
+        {
+            if (tem1[k] == '#')
+            {
+                x = 1;
+                continue;
+            }
+            for (j = 0; j < ct1; j++)
+            {
+                if (terminals[j] == tem1[k])
+                {
+                    parsetable[l][j] = i + 1;
+                }
+            }
+        }
+
+        if (x)
+        {
+            follow(tem2, production[i][0]);
+            for (k = 0; tem2[k] != '\0'; k++)
+            {
+                for (j = 0; j < ct1; j++)
+                {
+                    if (terminals[j] == tem2[k])
+                    {
+                        parsetable[l][j] = i + 1;
+                    }
+                }
+            }
         }
     }
 
-    printf("\n");
-    for (i = 0; i < no_pro; ++i)
+    printf("\n\t       Parsing table ");
+    printf("\n\t");
+    for (i = 0; i < ct1; i++)
     {
-        if (i == 0 || (pro[i - 1].str[0] != pro[i].str[0]))
-        {
-            char c = pro[i].str[0];
-            printf("FOLLOW OF %c: ", c);
-            for (j = 0; j < TSIZE; ++j)
-            {
-                if (follow[c - 'A'][j])
-                {
-                    printf("%c ", j);
-                }
-            }
-            printf("\n");
-        }
+        printf("%c", terminals[i]);
+        printf("\t");
     }
-    // display first of each variable ß
-    // in form A->ß
     printf("\n");
-    for (i = 0; i < no_pro; ++i)
+    for (i = 0; i < ct2; i++)
     {
-        printf("FIRST OF %s: ", pro[i].str);
-        for (j = 0; j < TSIZE; ++j)
+        printf("%c", nonterminals[i]);
+        printf("\t");
+        for (j = 0; j < ct1; j++)
         {
-            if (first_rhs[i][j])
+            int z;
+            z = parsetable[i][j];
+            if (z == 0)
             {
-                printf("%c ", j);
+                printf("\t");
+            }
+            else
+            {
+                printf("%s", production[z - 1]);
+                printf("\t");
             }
         }
         printf("\n");
     }
 
-    // the parse table contains '$' set terminal['$'] = 1
-    // to include '$' in the parse table
-    terminal['$'] = 1;
-
-    // the parse table do not read '^' as input so we set terminal['^'] = 0
-    // to remove '^' from terminals
-    terminal['^'] = 0;
-
-    printf("\n");
-    printf("\n\t**************** LL(1) PARSING TABLE *******************\n");
-    printf("\t--------------------------------------------------------\n");
-    printf("%-10s", "");
-    for (i = 0; i < TSIZE; ++i)
-    {
-        if (terminal[i])
-            printf("%-10c", i);
-    }
-    printf("\n");
-    int p = 0;
-    for (i = 0; i < no_pro; ++i)
-    {
-        if (i != 0 && (pro[i].str[0] != pro[i - 1].str[0]))
-            p = p + 1;
-        for (j = 0; j < TSIZE; ++j)
-        {
-            if (first_rhs[i][j] && j != '^')
-            {
-                table[p][j] = i + 1;
-            }
-            else if (first_rhs[i]['^'])
-            {
-                for (k = 0; k < TSIZE; ++k)
-                {
-                    if (follow[pro[i].str[0] - 'A'][k])
-                    {
-                        table[p][k] = i + 1;
-                    }
-                }
-            }
-        }
-    }
-    k = 0;
-    for (i = 0; i < no_pro; ++i)
-    {
-        if (i == 0 || (pro[i - 1].str[0] != pro[i].str[0]))
-        {
-            printf("%-10c", pro[i].str[0]);
-            for (j = 0; j < TSIZE; ++j)
-            {
-                if (table[k][j])
-                {
-                    printf("%-10s", pro[table[k][j] - 1].str);
-                }
-                else if (terminal[j])
-                {
-                    printf("%-10s", "");
-                }
-            }
-            ++k;
-            printf("\n");
-        }
-    }
+    return 0;
 }

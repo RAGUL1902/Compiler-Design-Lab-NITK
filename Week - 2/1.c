@@ -1,284 +1,205 @@
-/*
- *  Implement a program to identify FIRST and FOLLOW sets for a given Grammar.
- */
-
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
-void followfirst(char, int, int);
-void follow(char c);
+int pno;
+char production[25][25];
 
-void findfirst(char, int, int);
-
-int count, n = 0;
-
-// Stores the final result
-// of the First Sets
-char calc_first[10][100];
-
-// Stores the final result
-// of the Follow Sets
-char calc_follow[10][100];
-int m = 0;
-
-// Stores the production rules
-char production[10][10];
-char f[10], first[10];
-int k;
-char ck;
-int e;
-
-int main(int argc, char **argv)
+void add_res(char array[], char val)
 {
-    int jm = 0;
-    int km = 0;
-    int i, choice;
-    char c, ch;
-    count = 8;
-
-    // The Input grammar
-    strcpy(production[0], "E=TR");
-    strcpy(production[1], "R=+TR");
-    strcpy(production[2], "R=#");
-    strcpy(production[3], "T=FY");
-    strcpy(production[4], "Y=*FY");
-    strcpy(production[5], "Y=#");
-    strcpy(production[6], "F=(E)");
-    strcpy(production[7], "F=i");
-
-    int kay;
-    char done[count];
-    int ptr = -1;
-
-    for (k = 0; k < count; k++)
+    int temp;
+    for (temp = 0; array[temp] != '\0'; temp++)
     {
-        for (kay = 0; kay < 100; kay++)
+        if (array[temp] == val)
         {
-            calc_first[k][kay] = '!';
+            return;
         }
     }
-    int point1 = 0, point2, xxx;
-
-    for (k = 0; k < count; k++)
-    {
-        c = production[k][0];
-        point2 = 0;
-        xxx = 0;
-
-        // Checking if First of c has
-        // already been calculated
-        for (kay = 0; kay <= ptr; kay++)
-            if (c == done[kay])
-                xxx = 1;
-
-        if (xxx == 1)
-            continue;
-
-        findfirst(c, 0, 0);
-        ptr += 1;
-
-        done[ptr] = c;
-        printf("\n First(%c) = { ", c);
-        calc_first[point1][point2++] = c;
-
-        for (i = 0 + jm; i < n; i++)
-        {
-            int lark = 0, chk = 0;
-
-            for (lark = 0; lark < point2; lark++)
-            {
-
-                if (first[i] == calc_first[point1][lark])
-                {
-                    chk = 1;
-                    break;
-                }
-            }
-            if (chk == 0)
-            {
-                printf("%c, ", first[i]);
-                calc_first[point1][point2++] = first[i];
-            }
-        }
-        printf("}\n");
-        jm = n;
-        point1++;
-    }
-    printf("\n");
-    printf("-----------------------------------------------\n\n");
-    char donee[count];
-    ptr = -1;
-
-    for (k = 0; k < count; k++)
-    {
-        for (kay = 0; kay < 100; kay++)
-        {
-            calc_follow[k][kay] = '!';
-        }
-    }
-    point1 = 0;
-    int land = 0;
-    for (e = 0; e < count; e++)
-    {
-        ck = production[e][0];
-        point2 = 0;
-        xxx = 0;
-
-        // Checking if Follow of ck
-        // has already been calculated
-        for (kay = 0; kay <= ptr; kay++)
-            if (ck == donee[kay])
-                xxx = 1;
-
-        if (xxx == 1)
-            continue;
-        land += 1;
-
-        follow(ck);
-        ptr += 1;
-
-        donee[ptr] = ck;
-        printf(" Follow(%c) = { ", ck);
-        calc_follow[point1][point2++] = ck;
-
-        for (i = 0 + km; i < m; i++)
-        {
-            int lark = 0, chk = 0;
-            for (lark = 0; lark < point2; lark++)
-            {
-                if (f[i] == calc_follow[point1][lark])
-                {
-                    chk = 1;
-                    break;
-                }
-            }
-            if (chk == 0)
-            {
-                printf("%c, ", f[i]);
-                calc_follow[point1][point2++] = f[i];
-            }
-        }
-        printf(" }\n\n");
-        km = m;
-        point1++;
-    }
+    array[temp] = val;
+    array[temp + 1] = '\0';
 }
 
-void follow(char c)
+void first(char *array, char ch)
 {
-    int i, j;
-
-    // Adding "$" to the follow
-    // set of the start symbol
-    if (production[0][0] == c)
+    int count, j, k;
+    char temporary_result[20];
+    int x;
+    temporary_result[0] = '\0';
+    array[0] = '\0';
+    if (!(isupper(ch)))
     {
-        f[m++] = '$';
+        add_res(array, ch);
+        return;
     }
-    for (i = 0; i < 10; i++)
+    for (count = 0; count < pno; count++)
     {
-        for (j = 2; j < 10; j++)
+        if (production[count][0] == ch)
         {
-            if (production[i][j] == c)
+            if (production[count][2] == '#')
+            {
+                add_res(array, '#');
+            }
+            else
+            {
+                j = 2;
+                while (production[count][j] != '\0')
+                {
+                    x = 0;
+                    first(temporary_result, production[count][j]);
+                    for (k = 0; temporary_result[k] != '\0'; k++)
+                    {
+                        if (temporary_result[k] == '#')
+                        {
+                            continue;
+                        }
+                        add_res(array, temporary_result[k]);
+                    }
+                    for (k = 0; temporary_result[k] != '\0'; k++)
+                    {
+                        if (temporary_result[k] == '#')
+                        {
+                            x = 1;
+                            break;
+                        }
+                    }
+                    if (!x)
+                    {
+                        break;
+                    }
+                    j++;
+                }
+                if (production[count][j] == '\0')
+                {
+                    add_res(array, '#');
+                }
+            }
+        }
+    }
+    return;
+}
+
+void follow(char *array, char ch)
+{
+    int i, j, k;
+    int length = strlen(production[i]);
+    array[0] = '\0';
+    char temporary_result[20];
+    char temp2[20];
+    char temp3[20];
+
+    for (i = 0; i < pno; i++)
+    {
+        if (production[i][0] == ch)
+        {
+            add_res(array, '$');
+        }
+        length = strlen(production[i]);
+        for (j = 2; j < length; j++)
+        {
+            if (production[i][j] == ch)
             {
                 if (production[i][j + 1] != '\0')
                 {
-                    // Calculate the first of the next
-                    // Non-Terminal in the production
-                    followfirst(production[i][j + 1], i, (j + 2));
-                }
+                    int t = 0, z;
+                    z = j;
+                    while (production[i][z + 1] != '\0')
+                    {
+                        first(temporary_result, production[i][z + 1]);
 
-                if (production[i][j + 1] == '\0' && c != production[i][0])
+                        for (k = 0; temporary_result[k] != '\0'; k++)
+                        {
+                            if (temporary_result[k] == '#')
+                            {
+                                t = 1;
+                                continue;
+                            }
+                            add_res(array, temporary_result[k]);
+                        }
+                        if (!t)
+                        {
+                            break;
+                        }
+
+                        z++;
+                    }
+                    if (production[i][z + 1] == '\0' && production[i][z + 1] != production[i][0])
+                    {
+                        printf("   ");
+                        follow(temp3, production[i][0]);
+
+                        for (k = 0; temp3[k] != '\0'; k++)
+                        {
+                            add_res(array, temp3[k]);
+                        }
+                    }
+                }
+                if (production[i][j + 1] == '\0' && ch != production[i][0])
                 {
-                    // Calculate the follow of the Non-Terminal
-                    // in the L.H.S. of the production
-                    follow(production[i][0]);
+                    printf("   ");
+                    follow(temp2, production[i][0]);
+
+                    for (k = 0; temp2[k] != '\0'; k++)
+                    {
+                        add_res(array, temp2[k]);
+                    }
                 }
             }
         }
     }
 }
 
-void findfirst(char c, int q1, int q2)
+int main()
 {
-    int j;
-
-    if (!(isupper(c)))
+    char op;
+    int ft;
+    int count;
+    printf("\nEnter the Total Number of Productions:\t");
+    scanf("%d", &pno);
+    for (count = 0; count < pno; count++)
     {
-        first[n++] = c;
+        printf("\n Production  %d:\t", count + 1);
+        scanf("%s", production[count]);
     }
-    for (j = 0; j < count; j++)
+
+    do
     {
-        if (production[j][0] == c)
+        printf("\nPress 1 for finding first and Press 2 for finding Follow: ");
+        scanf("%d", &ft);
+        if (ft == 1)
         {
-            if (production[j][2] == '#')
+
+            char ch;
+            char array[25];
+
+            printf("\nEnter a value to find first:\t");
+            scanf(" %c", &ch);
+            first(array, ch);
+            printf("\nFirst Value of %c:\t{ ", ch);
+            for (count = 0; array[count] != '\0'; count++)
             {
-                if (production[q1][q2] == '\0')
-                    first[n++] = '#';
-                else if (production[q1][q2] != '\0' && (q1 != 0 || q2 != 0))
-                {
-                    // Recursion to calculate First of New
-                    // Non-Terminal we encounter after epsilon
-                    findfirst(production[q1][q2], q1, (q2 + 1));
-                }
-                else
-                    first[n++] = '#';
-            }
-            else if (!isupper(production[j][2]))
-            {
-                first[n++] = production[j][2];
-            }
-            else
-            {
-                // Recursion to calculate First of
-                // New Non-Terminal we encounter
-                // at the beginning
-                findfirst(production[j][2], j, 3);
+                printf(" %c ", array[count]);
             }
         }
-    }
-}
-
-void followfirst(char c, int c1, int c2)
-{
-    int k;
-
-    if (!(isupper(c)))
-        f[m++] = c;
-    else
-    {
-        int i = 0, j = 1;
-        for (i = 0; i < count; i++)
+        else
         {
-            if (calc_first[i][0] == c)
-                break;
-        }
 
-        //Including the First set of the
-        // Non-Terminal in the Follow of
-        // the original query
-        while (calc_first[i][j] != '!')
-        {
-            if (calc_first[i][j] != '#')
+            char ch;
+            char array[25];
+
+            printf("\nEnter a value to find follow:\t");
+            scanf(" %c", &ch);
+            follow(array, ch);
+            printf("\nFollow Value of %c:\t{ ", ch);
+
+            for (count = 0; array[count] != '\0'; count++)
             {
-                f[m++] = calc_first[i][j];
+                printf(" %c ", array[count]);
             }
-            else
-            {
-                if (production[c1][c2] == '\0')
-                {
-                    // Case where we reach the
-                    // end of a production
-                    follow(production[c1][0]);
-                }
-                else
-                {
-                    // Recursion to the next symbol
-                    // in case we encounter a "#"
-                    followfirst(production[c1][c2], c1, c2 + 1);
-                }
-            }
-            j++;
         }
-    }
+        printf("}\n");
+        printf("Press 1 to continue, else press anything \t");
+        scanf(" %c", &op);
+    } while (op == '1');
+
+    return 0;
 }
