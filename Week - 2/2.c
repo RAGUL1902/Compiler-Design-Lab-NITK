@@ -87,12 +87,13 @@ void follow(char *array, char ch)
     char temp2[20];
     char temp3[20];
 
+    if (production[0][0] == ch)
+    {
+        add_res(array, '$');
+    }
+
     for (i = 0; i < pno; i++)
     {
-        if (production[i][0] == ch)
-        {
-            add_res(array, '$');
-        }
         length = strlen(production[i]);
         for (j = 2; j < length; j++)
         {
