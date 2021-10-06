@@ -31,7 +31,8 @@ int main()
                 LR_0[lr_index][k] = productions[i][k];
             }
             LR_0[lr_index][k] = '.';
-            for (++k; k <= prod_len; k++)
+            k = k + 1;
+            for (k; k <= prod_len; k++)
             {
                 LR_0[lr_index][k] = productions[i][k - 1];
             }
