@@ -1,0 +1,18 @@
+#include<stdio.h>
+
+int main(){
+    // % symbol added in single line comment will not get changed into $
+    
+    int a = 5;
+    
+    int %ptr1 = &a;
+    
+    %ptr1 = 10;
+    
+    int %ptr2 = ptr1;
+    
+    /* 
+        % symbol added in multiline comment will not 
+        get changed into $ symbol
+    */
+}
